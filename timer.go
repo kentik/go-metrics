@@ -141,7 +141,7 @@ type StandardTimer struct {
 
 // Clear clears underlaying histogram.
 func (t *StandardTimer) Clear() {
-	return t.histogram.Clear()
+	t.histogram.Clear()
 }
 
 // Count returns the number of events recorded.
@@ -250,7 +250,7 @@ type TimerSnapshot struct {
 }
 
 // Clear panics.
-func (t *TimerTimer) Clear() {
+func (t *TimerSnapshot) Clear() {
 	panic("Clear called on a TimerSnapshot")
 }
 
