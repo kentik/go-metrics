@@ -232,9 +232,10 @@ func (t *StandardTimer) Update(d time.Duration) {
 
 // Record the duration of an event that started at a time and ends now.
 func (t *StandardTimer) UpdateSince(ts time.Time) {
+	d := int64(time.Since(ts))
 	t.mutex.Lock()
 	defer t.mutex.Unlock()
-	t.histogram.Update(int64(time.Since(ts)))
+	t.histogram.Update(d)
 	t.meter.Mark(1)
 }
 
