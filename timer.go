@@ -146,7 +146,7 @@ func (t *StandardTimer) Clear() {
 
 // Count returns the number of events recorded.
 func (t *StandardTimer) Count() int64 {
-	return t.meter.Count()
+	return t.histogram.Count()
 }
 
 // Max returns the maximum value in the sample.
@@ -257,7 +257,7 @@ func (t *TimerSnapshot) Clear() {
 
 // Count returns the number of events recorded at the time the snapshot was
 // taken.
-func (t *TimerSnapshot) Count() int64 { return t.meter.Count() }
+func (t *TimerSnapshot) Count() int64 { return t.histogram.Count() }
 
 // Max returns the maximum value at the time the snapshot was taken.
 func (t *TimerSnapshot) Max() int64 { return t.histogram.Max() }
