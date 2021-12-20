@@ -2,6 +2,7 @@ package metrics
 
 import (
 	"fmt"
+	"os"
 	"reflect"
 	"sync"
 )
@@ -177,4 +178,64 @@ func RunHealthchecks() {
 // Unregister the metric with the given name.
 func Unregister(name string) {
 	DefaultRegistry.Unregister(name)
+}
+
+// Try this -- return the registered metric so it can be created, registered,
+// and stored in a single line in struct initialization.
+func RegisterMeter(name string) Meter {
+	m := NewMeter()
+	err := DefaultRegistry.Register(name, m)
+	if err != nil {
+		// We don't have a log here -- just yell to stderr
+		fmt.Fprintf(os.Stderr, "Error on metric registration %s: %v", name, err)
+	}
+	return m
+}
+
+func RegisterCounter(name string) Counter {
+	c := NewCounter()
+	err := DefaultRegistry.Register(name, c)
+	if err != nil {
+		// We don't have a log here -- just yell to stderr
+		fmt.Fprintf(os.Stderr, "Error on metric registration %s: %v", name, err)
+	}
+	return c
+}
+
+func RegisterGauge(name string) Gauge {
+	g := NewGauge()
+	err := DefaultRegistry.Register(name, g)
+	if err != nil {
+		// We don't have a log here -- just yell to stderr
+		fmt.Fprintf(os.Stderr, "Error on metric registration %s: %v", name, err)
+	}
+	return g
+}
+
+func RegisterTimer(name string) Timer {
+	t := NewTimer()
+	err := DefaultRegistry.Register(name, t)
+	if err != nil {
+		// We don't have a log here -- just yell to stderr
+		fmt.Fprintf(os.Stderr, "Error on metric registration %s: %v", name, err)
+	}
+	return t
+}
+
+func RegisterHistogram(name string) Histogram {
+	// We cargo-cult these values through all our repos; might as well put them here.
+	// At any rate, I'm not at all convinced that we even want to use an ExpDecaySample
+	// here -- my sense is that we really ought to be using UniformSample everywhere,
+	// so that our means are equally representative of the entire minute between each
+	// of our exports.  But let's do that experiment a little later.
+	sampleSize := 1028
+	sampleAlpha := 0.015
+
+	h := NewHistogram(NewExpDecaySample(sampleSize, sampleAlpha))
+	err := DefaultRegistry.Register(name, h)
+	if err != nil {
+		// We don't have a log here -- just yell to stderr
+		fmt.Fprintf(os.Stderr, "Error on metric registration %s: %v", name, err)
+	}
+	return h
 }
